@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "wayfinder-posts:block/oak_wayfinder_post"
+    }
+  }
+}
