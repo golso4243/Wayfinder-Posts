@@ -1,6 +1,38 @@
 {
-  "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "wayfinder-posts:block/oak_wayfinder_post"
-  }
+    "particle": "wayfinder-posts:block/oak_wayfinder_post",
+    "post": "wayfinder-posts:block/oak_wayfinder_post"
+  },
+  "elements": [
+    {
+      "from": [6, 0, 6],
+      "to": [10, 16, 10],
+      "faces": {
+        "north": {
+          "uv": [6, 0, 10, 16],
+          "texture": "#post"
+        },
+        "east": {
+          "uv": [6, 0, 10, 16],
+          "texture": "#post"
+        },
+        "south": {
+          "uv": [6, 0, 10, 16],
+          "texture": "#post"
+        },
+        "west": {
+          "uv": [6, 0, 10, 16],
+          "texture": "#post"
+        },
+        "up": {
+          "uv": [6, 6, 10, 10],
+          "texture": "#post"
+        },
+        "down": {
+          "uv": [6, 6, 10, 10],
+          "texture": "#post"
+        }
+      }
+    }
+  ]
 }
