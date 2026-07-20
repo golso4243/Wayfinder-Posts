@@ -10,10 +10,13 @@ public class WayfinderPostBlockEntity extends BlockEntity {
 
     private static final String LINE_ONE_KEY = "line_one";
     private static final String LINE_TWO_KEY = "line_two";
+    private static final String ARROW_KEY = "arrow";
+
     private static final int MAX_LINE_LENGTH = 64;
 
     private String lineOne = "";
     private String lineTwo = "";
+    private WayfinderArrow arrow = WayfinderArrow.NONE;
 
     public WayfinderPostBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.WAYFINDER_POST, pos, state);
@@ -37,12 +40,25 @@ public class WayfinderPostBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    public WayfinderArrow getArrow() {
+        return arrow;
+    }
+
+    public void setArrow(WayfinderArrow arrow) {
+        this.arrow = arrow == null
+                ? WayfinderArrow.NONE
+                : arrow;
+
+        setChanged();
+    }
+
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
 
         output.putString(LINE_ONE_KEY, lineOne);
         output.putString(LINE_TWO_KEY, lineTwo);
+        output.putString(ARROW_KEY, arrow.getSerializedName());
     }
 
     @Override
@@ -55,6 +71,10 @@ public class WayfinderPostBlockEntity extends BlockEntity {
 
         lineTwo = sanitizeLine(
                 input.getStringOr(LINE_TWO_KEY, "")
+        );
+
+        arrow = WayfinderArrow.fromSerializedName(
+                input.getStringOr(ARROW_KEY, "none")
         );
     }
 
