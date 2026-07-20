@@ -19,7 +19,7 @@ import java.util.function.Function;
 public final class ModBlocks {
     public static final Block OAK_WAYFINDER_POST = register(
             "oak_wayfinder_post",
-            Block::new,
+            WayfinderPostBlock::new,
             BlockBehaviour.Properties.of()
                     .strength(2.0F, 3.0F)
                     .sound(SoundType.WOOD),
