@@ -62,7 +62,7 @@ public final class ModBlocks {
     }
 
     public static void initialize() {
-        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.BUILDING_BLOCKS)
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS)
                 .register(entries -> entries.accept(OAK_WAYFINDER_POST.asItem()));
 
         WayfinderPosts.LOGGER.info("Registered Wayfinder Posts blocks");
