@@ -11,12 +11,23 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class WayfinderPostBlock extends Block {
+public class WayfinderPostBlock extends Block implements SimpleWaterloggedBlock {
     public static final EnumProperty<Direction> FACING =
             HorizontalDirectionalBlock.FACING;
+
+    public static final BooleanProperty WATERLOGGED =
+            BlockStateProperties.WATERLOGGED;
 
     private static final VoxelShape POST_SHAPE =
             Block.box(6.0, 0.0, 6.0, 10.0, 16.0, 10.0);
@@ -27,20 +38,33 @@ public class WayfinderPostBlock extends Block {
         registerDefaultState(
                 stateDefinition.any()
                         .setValue(FACING, Direction.NORTH)
+                        .setValue(WATERLOGGED, false)
         );
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        FluidState fluidState = context.getLevel()
+                .getFluidState(context.getClickedPos());
+
         return defaultBlockState()
-                .setValue(FACING, context.getHorizontalDirection().getOpposite());
+                .setValue(
+                        FACING,
+                        context.getHorizontalDirection().getOpposite()
+                )
+                .setValue(
+                        WATERLOGGED,
+                        fluidState.is(Fluids.WATER)
+                );
     }
+
+
 
     @Override
     protected void createBlockStateDefinition(
             StateDefinition.Builder<Block, BlockState> builder
     ) {
-        builder.add(FACING);
+        builder.add(FACING, WATERLOGGED);
     }
 
     @Override
@@ -55,6 +79,46 @@ public class WayfinderPostBlock extends Block {
     protected BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(
                 mirror.getRotation(state.getValue(FACING))
+        );
+    }
+
+    @Override
+    protected FluidState getFluidState(BlockState state) {
+        if (state.getValue(WATERLOGGED)) {
+            return Fluids.WATER.getSource(false);
+        }
+
+        return super.getFluidState(state);
+    }
+
+    @Override
+    protected BlockState updateShape(
+            BlockState state,
+            LevelReader level,
+            ScheduledTickAccess scheduledTickAccess,
+            BlockPos pos,
+            Direction direction,
+            BlockPos neighborPos,
+            BlockState neighborState,
+            RandomSource random
+    ) {
+        if (state.getValue(WATERLOGGED)) {
+            scheduledTickAccess.scheduleTick(
+                    pos,
+                    Fluids.WATER,
+                    Fluids.WATER.getTickDelay(level)
+            );
+        }
+
+        return super.updateShape(
+                state,
+                level,
+                scheduledTickAccess,
+                pos,
+                direction,
+                neighborPos,
+                neighborState,
+                random
         );
     }
 

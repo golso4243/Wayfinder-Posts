@@ -1,17 +1,33 @@
 {
   "variants": {
-    "facing=north": {
+    "facing=north,waterlogged=false": {
       "model": "wayfinder-posts:block/oak_wayfinder_post"
     },
-    "facing=east": {
+    "facing=east,waterlogged=false": {
       "model": "wayfinder-posts:block/oak_wayfinder_post",
       "y": 90
     },
-    "facing=south": {
+    "facing=south,waterlogged=false": {
       "model": "wayfinder-posts:block/oak_wayfinder_post",
       "y": 180
     },
-    "facing=west": {
+    "facing=west,waterlogged=false": {
+      "model": "wayfinder-posts:block/oak_wayfinder_post",
+      "y": 270
+    },
+
+    "facing=north,waterlogged=true": {
+      "model": "wayfinder-posts:block/oak_wayfinder_post"
+    },
+    "facing=east,waterlogged=true": {
+      "model": "wayfinder-posts:block/oak_wayfinder_post",
+      "y": 90
+    },
+    "facing=south,waterlogged=true": {
+      "model": "wayfinder-posts:block/oak_wayfinder_post",
+      "y": 180
+    },
+    "facing=west,waterlogged=true": {
       "model": "wayfinder-posts:block/oak_wayfinder_post",
       "y": 270
     }
