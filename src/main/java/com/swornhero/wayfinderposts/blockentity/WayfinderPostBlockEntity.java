@@ -9,9 +9,11 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class WayfinderPostBlockEntity extends BlockEntity {
 
     private static final String LINE_ONE_KEY = "line_one";
+    private static final String LINE_TWO_KEY = "line_two";
     private static final int MAX_LINE_LENGTH = 64;
 
     private String lineOne = "";
+    private String lineTwo = "";
 
     public WayfinderPostBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.WAYFINDER_POST, pos, state);
@@ -26,10 +28,21 @@ public class WayfinderPostBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    public String getLineTwo() {
+        return lineTwo;
+    }
+
+    public void setLineTwo(String lineTwo) {
+        this.lineTwo = sanitizeLine(lineTwo);
+        setChanged();
+    }
+
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
+
         output.putString(LINE_ONE_KEY, lineOne);
+        output.putString(LINE_TWO_KEY, lineTwo);
     }
 
     @Override
@@ -38,6 +51,10 @@ public class WayfinderPostBlockEntity extends BlockEntity {
 
         lineOne = sanitizeLine(
                 input.getStringOr(LINE_ONE_KEY, "")
+        );
+
+        lineTwo = sanitizeLine(
+                input.getStringOr(LINE_TWO_KEY, "")
         );
     }
 
