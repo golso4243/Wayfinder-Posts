@@ -25,6 +25,12 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class WayfinderPostBlock extends Block
         implements EntityBlock, SimpleWaterloggedBlock {
@@ -71,6 +77,47 @@ public class WayfinderPostBlock extends Block
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new WayfinderPostBlockEntity(pos, state);
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            BlockHitResult hitResult
+    ) {
+        if (level.isClientSide() || !(player instanceof ServerPlayer serverPlayer)) {
+            return InteractionResult.SUCCESS;
+        }
+
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        if (blockEntity instanceof WayfinderPostBlockEntity wayfinderPost) {
+            String lineOne = displayValue(wayfinderPost.getLineOne());
+            String lineTwo = displayValue(wayfinderPost.getLineTwo());
+            String arrow = wayfinderPost.getArrow().getSerializedName();
+            Direction facing = state.getValue(FACING);
+
+            serverPlayer.sendSystemMessage(
+                    Component.literal(
+                            "Wayfinder Post — "
+                                    + lineOne
+                                    + " | "
+                                    + lineTwo
+                                    + " | Arrow: "
+                                    + arrow
+                                    + " | Facing: "
+                                    + facing.getName()
+                    )
+            );
+        }
+
+        return InteractionResult.SUCCESS;
+    }
+
+    private static String displayValue(String value) {
+        return value.isBlank() ? "<empty>" : value;
     }
 
     @Override
