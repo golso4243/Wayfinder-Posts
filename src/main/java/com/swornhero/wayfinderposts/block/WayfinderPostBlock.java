@@ -21,6 +21,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
 
 public class WayfinderPostBlock extends Block implements SimpleWaterloggedBlock {
     public static final EnumProperty<Direction> FACING =
@@ -31,6 +32,26 @@ public class WayfinderPostBlock extends Block implements SimpleWaterloggedBlock 
 
     private static final VoxelShape POST_SHAPE =
             Block.box(6.0, 0.0, 6.0, 10.0, 16.0, 10.0);
+
+    private static final VoxelShape NORTH_ARM_SHAPE = Shapes.or(
+            POST_SHAPE,
+            Block.box(6.0, 10.0, 0.0, 10.0, 14.0, 6.0)
+    );
+
+    private static final VoxelShape EAST_ARM_SHAPE = Shapes.or(
+            POST_SHAPE,
+            Block.box(10.0, 10.0, 6.0, 16.0, 14.0, 10.0)
+    );
+
+    private static final VoxelShape SOUTH_ARM_SHAPE = Shapes.or(
+            POST_SHAPE,
+            Block.box(6.0, 10.0, 10.0, 10.0, 14.0, 16.0)
+    );
+
+    private static final VoxelShape WEST_ARM_SHAPE = Shapes.or(
+            POST_SHAPE,
+            Block.box(0.0, 10.0, 6.0, 6.0, 14.0, 10.0)
+    );
 
     public WayfinderPostBlock(Properties properties) {
         super(properties);
@@ -129,7 +150,7 @@ public class WayfinderPostBlock extends Block implements SimpleWaterloggedBlock 
             BlockPos pos,
             CollisionContext context
     ) {
-        return POST_SHAPE;
+        return getShapeForDirection(state.getValue(FACING));
     }
 
     @Override
@@ -139,6 +160,16 @@ public class WayfinderPostBlock extends Block implements SimpleWaterloggedBlock 
             BlockPos pos,
             CollisionContext context
     ) {
-        return POST_SHAPE;
+        return getShapeForDirection(state.getValue(FACING));
+    }
+
+    private static VoxelShape getShapeForDirection(Direction direction) {
+        return switch (direction) {
+            case NORTH -> NORTH_ARM_SHAPE;
+            case EAST -> EAST_ARM_SHAPE;
+            case SOUTH -> SOUTH_ARM_SHAPE;
+            case WEST -> WEST_ARM_SHAPE;
+            default -> POST_SHAPE;
+        };
     }
 }
