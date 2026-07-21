@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.BlockPos;
 
 public class WayfinderPostScreen extends Screen {
 
@@ -13,20 +14,24 @@ public class WayfinderPostScreen extends Screen {
     private static final int TEXT_FIELD_WIDTH = 200;
     private static final int WIDGET_HEIGHT = 20;
 
+    private final BlockPos blockPos;
     private final String initialLineOne;
     private final String initialLineTwo;
+
     private WayfinderArrow selectedArrow;
 
     private EditBox lineOneField;
     private EditBox lineTwoField;
 
     public WayfinderPostScreen(
+            BlockPos blockPos,
             String lineOne,
             String lineTwo,
             WayfinderArrow arrow
     ) {
         super(Component.literal("Edit Wayfinder Post"));
 
+        this.blockPos = blockPos;
         this.initialLineOne = lineOne;
         this.initialLineTwo = lineTwo;
         this.selectedArrow = arrow;

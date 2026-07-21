@@ -2,6 +2,7 @@ package com.swornhero.wayfinderposts;
 
 import com.swornhero.wayfinderposts.block.ModBlocks;
 import com.swornhero.wayfinderposts.blockentity.ModBlockEntities;
+import com.swornhero.wayfinderposts.networking.ModNetworking;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ public class WayfinderPosts implements ModInitializer {
 	public void onInitialize() {
 		ModBlocks.initialize();
 		ModBlockEntities.initialize();
+		ModNetworking.initialize();
 
 		LOGGER.info("Initializing Wayfinder Posts");
 	}
