@@ -1,6 +1,7 @@
 package com.swornhero.wayfinderposts.block;
 
 import com.swornhero.wayfinderposts.blockentity.WayfinderPostBlockEntity;
+import com.swornhero.wayfinderposts.blockentity.WayfinderArrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -93,25 +94,42 @@ public class WayfinderPostBlock extends Block
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
-        if (blockEntity instanceof WayfinderPostBlockEntity wayfinderPost) {
-            String lineOne = displayValue(wayfinderPost.getLineOne());
-            String lineTwo = displayValue(wayfinderPost.getLineTwo());
-            String arrow = wayfinderPost.getArrow().getSerializedName();
-            Direction facing = state.getValue(FACING);
+        if (!(blockEntity instanceof WayfinderPostBlockEntity wayfinderPost)) {
+            return InteractionResult.PASS;
+        }
+
+        if (player.isShiftKeyDown()) {
+            WayfinderArrow nextArrow = wayfinderPost.getArrow().next();
+
+            wayfinderPost.setArrow(nextArrow);
 
             serverPlayer.sendSystemMessage(
                     Component.literal(
-                            "Wayfinder Post — "
-                                    + lineOne
-                                    + " | "
-                                    + lineTwo
-                                    + " | Arrow: "
-                                    + arrow
-                                    + " | Facing: "
-                                    + facing.getName()
+                            "Wayfinder arrow changed to: "
+                                    + nextArrow.getSerializedName()
                     )
             );
+
+            return InteractionResult.SUCCESS;
         }
+
+        String lineOne = displayValue(wayfinderPost.getLineOne());
+        String lineTwo = displayValue(wayfinderPost.getLineTwo());
+        String arrow = wayfinderPost.getArrow().getSerializedName();
+        Direction facing = state.getValue(FACING);
+
+        serverPlayer.sendSystemMessage(
+                Component.literal(
+                        "Wayfinder Post — "
+                                + lineOne
+                                + " | "
+                                + lineTwo
+                                + " | Arrow: "
+                                + arrow
+                                + " | Facing: "
+                                + facing.getName()
+                )
+        );
 
         return InteractionResult.SUCCESS;
     }

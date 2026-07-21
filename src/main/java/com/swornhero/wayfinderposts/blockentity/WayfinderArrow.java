@@ -1,6 +1,7 @@
 package com.swornhero.wayfinderposts.blockentity;
 
 import java.util.Locale;
+import org.jspecify.annotations.Nullable;
 
 public enum WayfinderArrow {
     NONE,
@@ -12,7 +13,14 @@ public enum WayfinderArrow {
         return name().toLowerCase(Locale.ROOT);
     }
 
-    public static WayfinderArrow fromSerializedName(String value) {
+    public WayfinderArrow next() {
+        WayfinderArrow[] arrows = values();
+        int nextIndex = (ordinal() + 1) % arrows.length;
+
+        return arrows[nextIndex];
+    }
+
+    public static WayfinderArrow fromSerializedName(@Nullable String value) {
         if (value == null) {
             return NONE;
         }
