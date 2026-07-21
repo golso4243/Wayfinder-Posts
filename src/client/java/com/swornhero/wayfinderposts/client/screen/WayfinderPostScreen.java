@@ -43,7 +43,7 @@ public class WayfinderPostScreen extends Screen {
     protected void init() {
         int left = (width - PANEL_WIDTH) / 2;
         int fieldLeft = (width - TEXT_FIELD_WIDTH) / 2;
-        int top = height / 2 - 90;
+        int top = height / 2 - 110;
 
         lineOneField = new EditBox(
                 font,
@@ -112,7 +112,7 @@ public class WayfinderPostScreen extends Screen {
                 arrowButtonWidth
         );
 
-        int actionButtonY = top + 125;
+        int actionButtonY = top + 180;
 
         addRenderableWidget(
                 Button.builder(
@@ -161,6 +161,29 @@ public class WayfinderPostScreen extends Screen {
         );
     }
 
+    private static String getArrowSymbol(WayfinderArrow arrow) {
+        return switch (arrow) {
+            case NONE -> "";
+            case LEFT -> "←";
+            case RIGHT -> "→";
+            case FORWARD -> "↑";
+        };
+    }
+
+    private static String createPreviewLine(
+            WayfinderArrow arrow,
+            String text
+    ) {
+        String arrowSymbol = getArrowSymbol(arrow);
+        String displayedText = text.isBlank() ? "Destination" : text;
+
+        if (arrowSymbol.isEmpty()) {
+            return displayedText;
+        }
+
+        return arrowSymbol + " " + displayedText;
+    }
+
     private void handleSave() {
         if (lineOneField == null || lineTwoField == null) {
             return;
@@ -187,7 +210,7 @@ public class WayfinderPostScreen extends Screen {
     ) {
         super.extractRenderState(graphics, mouseX, mouseY, delta);
 
-        int top = height / 2 - 90;
+        int top = height / 2 - 110;
 
         graphics.text(
                 font,
@@ -207,6 +230,77 @@ public class WayfinderPostScreen extends Screen {
                 0xFFD7AE73,
                 true
         );
+
+        String firstLine = lineOneField == null
+                ? initialLineOne
+                : lineOneField.getValue();
+
+        String secondLine = lineTwoField == null
+                ? initialLineTwo
+                : lineTwoField.getValue();
+
+        String previewFirstLine = createPreviewLine(
+                selectedArrow,
+                firstLine
+        );
+
+        String previewSecondLine = secondLine.isBlank()
+                ? ""
+                : secondLine;
+
+        int previewCenterX = width / 2;
+        int previewTop = top + 120;
+
+        graphics.text(
+                font,
+                "Preview",
+                previewCenterX - font.width("Preview") / 2,
+                previewTop,
+                0xFFAAAAAA,
+                true
+        );
+
+        int boardLeft = previewCenterX - 100;
+        int boardTop = previewTop + 14;
+        int boardWidth = 200;
+        int boardHeight = 38;
+
+        graphics.fill(
+                boardLeft,
+                boardTop,
+                boardLeft + boardWidth,
+                boardTop + boardHeight,
+                0xFF6F4528
+        );
+
+        graphics.fill(
+                boardLeft + 2,
+                boardTop + 2,
+                boardLeft + boardWidth - 2,
+                boardTop + boardHeight - 2,
+                0xFF9B673C
+        );
+
+        graphics.text(
+                font,
+                previewFirstLine,
+                previewCenterX - font.width(previewFirstLine) / 2,
+                boardTop + 7,
+                0xFF2B190F,
+                false
+        );
+
+        if (!previewSecondLine.isEmpty()) {
+            graphics.text(
+                    font,
+                    previewSecondLine,
+                    previewCenterX
+                            - font.width(previewSecondLine) / 2,
+                    boardTop + 21,
+                    0xFF2B190F,
+                    false
+            );
+        }
     }
 
     @Override
