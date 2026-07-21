@@ -5,6 +5,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.block.Block;
 
 public class WayfinderPostBlockEntity extends BlockEntity {
 
@@ -28,7 +29,7 @@ public class WayfinderPostBlockEntity extends BlockEntity {
 
     public void setLineOne(String lineOne) {
         this.lineOne = sanitizeLine(lineOne);
-        setChanged();
+        markUpdated();
     }
 
     public String getLineTwo() {
@@ -37,7 +38,7 @@ public class WayfinderPostBlockEntity extends BlockEntity {
 
     public void setLineTwo(String lineTwo) {
         this.lineTwo = sanitizeLine(lineTwo);
-        setChanged();
+        markUpdated();
     }
 
     public WayfinderArrow getArrow() {
@@ -45,11 +46,8 @@ public class WayfinderPostBlockEntity extends BlockEntity {
     }
 
     public void setArrow(WayfinderArrow arrow) {
-        this.arrow = arrow == null
-                ? WayfinderArrow.NONE
-                : arrow;
-
-        setChanged();
+        this.arrow = arrow;
+        markUpdated();
     }
 
     @Override
@@ -78,11 +76,22 @@ public class WayfinderPostBlockEntity extends BlockEntity {
         );
     }
 
-    private static String sanitizeLine(String value) {
-        if (value == null) {
-            return "";
-        }
+    private void markUpdated() {
+        setChanged();
 
+        if (level != null && !level.isClientSide()) {
+            BlockState state = getBlockState();
+
+            level.sendBlockUpdated(
+                    worldPosition,
+                    state,
+                    state,
+                    Block.UPDATE_CLIENTS
+            );
+        }
+    }
+
+    private static String sanitizeLine(String value) {
         String sanitized = value.strip();
 
         if (sanitized.length() > MAX_LINE_LENGTH) {
