@@ -2,6 +2,9 @@ package com.swornhero.wayfinderposts.block;
 
 import com.swornhero.wayfinderposts.blockentity.WayfinderPostBlockEntity;
 import com.swornhero.wayfinderposts.blockentity.WayfinderArrow;
+import com.swornhero.wayfinderposts.blockentity.WayfinderArrow;
+import com.swornhero.wayfinderposts.networking.OpenWayfinderEditorPayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -113,29 +116,17 @@ public class WayfinderPostBlock extends Block
             return InteractionResult.SUCCESS;
         }
 
-        String lineOne = displayValue(wayfinderPost.getLineOne());
-        String lineTwo = displayValue(wayfinderPost.getLineTwo());
-        String arrow = wayfinderPost.getArrow().getSerializedName();
-        Direction facing = state.getValue(FACING);
-
-        serverPlayer.sendSystemMessage(
-                Component.literal(
-                        "Wayfinder Post — "
-                                + lineOne
-                                + " | "
-                                + lineTwo
-                                + " | Arrow: "
-                                + arrow
-                                + " | Facing: "
-                                + facing.getName()
+        ServerPlayNetworking.send(
+                serverPlayer,
+                new OpenWayfinderEditorPayload(
+                        pos,
+                        wayfinderPost.getLineOne(),
+                        wayfinderPost.getLineTwo(),
+                        wayfinderPost.getArrow().getSerializedName()
                 )
         );
 
         return InteractionResult.SUCCESS;
-    }
-
-    private static String displayValue(String value) {
-        return value.isBlank() ? "<empty>" : value;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.swornhero.wayfinderposts.client.screen;
 
 import com.swornhero.wayfinderposts.blockentity.WayfinderArrow;
+import com.swornhero.wayfinderposts.networking.SaveWayfinderPostPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -160,11 +162,19 @@ public class WayfinderPostScreen extends Screen {
     }
 
     private void handleSave() {
-        /*
-         * Networking will be added in the next step.
-         *
-         * For now, Save only closes the placeholder screen.
-         */
+        if (lineOneField == null || lineTwoField == null) {
+            return;
+        }
+
+        ClientPlayNetworking.send(
+                new SaveWayfinderPostPayload(
+                        blockPos,
+                        lineOneField.getValue(),
+                        lineTwoField.getValue(),
+                        selectedArrow.getSerializedName()
+                )
+        );
+
         onClose();
     }
 
