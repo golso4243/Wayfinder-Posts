@@ -6,6 +6,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 
 public class WayfinderPostBlockEntity extends BlockEntity {
 
@@ -74,6 +79,18 @@ public class WayfinderPostBlockEntity extends BlockEntity {
         arrow = WayfinderArrow.fromSerializedName(
                 input.getStringOr(ARROW_KEY, "none")
         );
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(
+            HolderLookup.Provider registryLookup
+    ) {
+        return saveWithoutMetadata(registryLookup);
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     private void markUpdated() {
