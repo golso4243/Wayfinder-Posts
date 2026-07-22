@@ -6,15 +6,24 @@ import net.minecraft.core.Direction;
 public final class WayfinderPostRenderState
         extends BlockEntityRenderState {
 
-    private String displayText = "";
+    private String firstLine = "";
+    private String secondLine = "";
     private Direction facing = Direction.NORTH;
 
-    public String getDisplayText() {
-        return displayText;
+    public String getFirstLine() {
+        return firstLine;
     }
 
-    public void setDisplayText(String displayText) {
-        this.displayText = displayText;
+    public void setFirstLine(String firstLine) {
+        this.firstLine = firstLine;
+    }
+
+    public String getSecondLine() {
+        return secondLine;
+    }
+
+    public void setSecondLine(String secondLine) {
+        this.secondLine = secondLine;
     }
 
     public Direction getFacing() {

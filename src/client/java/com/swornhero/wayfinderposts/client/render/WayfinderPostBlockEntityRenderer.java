@@ -52,12 +52,14 @@ public final class WayfinderPostBlockEntityRenderer
                 crumblingOverlay
         );
 
-        state.setDisplayText(
-                createDisplayText(
+        state.setFirstLine(
+                createFirstLine(
                         blockEntity.getArrow(),
                         blockEntity.getLineOne()
                 )
         );
+
+        state.setSecondLine(blockEntity.getLineTwo());
 
         state.setFacing(
                 blockEntity.getBlockState()
@@ -72,17 +74,18 @@ public final class WayfinderPostBlockEntityRenderer
             SubmitNodeCollector queue,
             CameraRenderState cameraState
     ) {
-        String text = state.getDisplayText();
+        String firstLine = state.getFirstLine();
+        String secondLine = state.getSecondLine();
 
-        if (text.isBlank()) {
+        if (firstLine.isBlank() && secondLine.isBlank()) {
             return;
         }
 
         matrices.pushPose();
 
         /*
-         * Temporary proof-of-concept position:
-         * centered slightly above the post's arm.
+         * Temporary shared position above the arm.
+         * Precise board-face positioning comes next.
          */
         matrices.translate(0.5, 1.08, 0.5);
 
@@ -98,25 +101,53 @@ public final class WayfinderPostBlockEntityRenderer
                 TEXT_SCALE
         );
 
-        float textWidth = font.width(text);
-
-        queue.submitText(
+        submitCenteredLine(
+                queue,
                 matrices,
-                -textWidth / 2.0F,
-                -4.0F,
-                Component.literal(text).getVisualOrderText(),
-                false,
-                Font.DisplayMode.SEE_THROUGH,
-                state.lightCoords,
-                0xFF2B190F,
-                0,
-                0
+                firstLine,
+                -9.0F,
+                state.lightCoords
+        );
+
+        submitCenteredLine(
+                queue,
+                matrices,
+                secondLine,
+                2.0F,
+                state.lightCoords
         );
 
         matrices.popPose();
     }
 
-    private static String createDisplayText(
+    private void submitCenteredLine(
+            SubmitNodeCollector queue,
+            PoseStack matrices,
+            String text,
+            float y,
+            int light
+    ) {
+        if (text.isBlank()) {
+            return;
+        }
+
+        float textWidth = font.width(text);
+
+        queue.submitText(
+                matrices,
+                -textWidth / 2.0F,
+                y,
+                Component.literal(text).getVisualOrderText(),
+                false,
+                Font.DisplayMode.SEE_THROUGH,
+                light,
+                0xFF2B190F,
+                0,
+                0
+        );
+    }
+
+    private static String createFirstLine(
             WayfinderArrow arrow,
             String lineOne
     ) {
