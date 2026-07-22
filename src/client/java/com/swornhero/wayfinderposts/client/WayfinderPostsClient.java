@@ -5,11 +5,20 @@ import com.swornhero.wayfinderposts.client.screen.WayfinderPostScreen;
 import com.swornhero.wayfinderposts.networking.OpenWayfinderEditorPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import com.swornhero.wayfinderposts.blockentity.ModBlockEntities;
+import com.swornhero.wayfinderposts.client.render.WayfinderPostBlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 
 public class WayfinderPostsClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+
+		BlockEntityRenderers.register(
+				ModBlockEntities.WAYFINDER_POST,
+				WayfinderPostBlockEntityRenderer::new
+		);
+
 		ClientPlayNetworking.registerGlobalReceiver(
 				OpenWayfinderEditorPayload.TYPE,
 				(payload, context) -> {
